@@ -36,7 +36,16 @@ export function AppHeader() {
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>{user.displayName}</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => signOut(auth)} className="cursor-pointer">
+              <DropdownMenuItem
+                onClick={() => {
+                  if (auth) {
+                    signOut(auth);
+                  } else {
+                    console.error("Firebase auth is not initialized.");
+                  }
+                }}
+                className="cursor-pointer"
+              >
                 Sign Out
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -46,3 +55,5 @@ export function AppHeader() {
     </header>
   );
 }
+
+

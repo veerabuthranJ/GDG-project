@@ -34,6 +34,8 @@ import { SubmitButton } from "@/components/submit-button";
 import { EngagementChart } from "@/components/engagement-chart";
 import type { AnalysisData } from "@/app/actions";
 import EyeTracker from "@/components/EyeTracker";
+import { useEffect } from "react";
+import { sendInterviewEmail } from "@/lib/sendEmail";
 
 
 const initialState: {
@@ -53,6 +55,38 @@ export default function InterviewPage() {
   const [state, formAction] = React.useActionState(getInterviewAnalysis, initialState);
   const [flag, setFlag] = useState<boolean>(false);
 
+  const emailRef = React.useRef<string>("");
+
+
+  useEffect(() => {
+    if (state.data && emailRef.current) {
+      const {
+        summary,
+        candidateName,
+        behavioralAnalysis,
+        suggestedResources
+      } = state.data;
+  
+      const resourceList = suggestedResources.join('\n');
+  
+      sendInterviewEmail({
+        user_email: emailRef.current,
+        candidate_name: candidateName,
+        summary,
+        confidence_level: behavioralAnalysis.confidenceLevel,
+        hesitation_frequency: behavioralAnalysis.hesitationFrequency,
+        clarity_of_speech: behavioralAnalysis.clarityOfSpeech,
+        demeanor: behavioralAnalysis.overallDemeanor,
+        resources: resourceList
+      }).then(() => {
+        console.log("✅ Email sent");
+      }).catch((err) => {
+        console.error("❌ Failed to send email", err);
+      });
+    }
+  }, [state.data]);
+  
+
   return (
     <div className="max-w-6xl mx-auto space-y-8">
       <header className="space-y-2">
@@ -71,7 +105,11 @@ export default function InterviewPage() {
             Provide the required information below to analyze an interview.
           </CardDescription>
         </CardHeader>
-        <form action={formAction}>
+        <form action={(formData) => {
+  emailRef.current = formData.get("userEmail") as string;
+  formAction(formData);
+}}>
+
           <CardContent className="space-y-6">
             <div className="space-y-2">
               <Label htmlFor="candidateName">Candidate Name</Label>
@@ -128,21 +166,21 @@ export default function InterviewPage() {
     {flag ? (
       <Card className="bg-green-50 border border-green-400">
         <CardHeader>
-          <CardTitle className="text-green-800">✅ Eye Movement Detected</CardTitle>
+          <CardTitle className="text-green-800"> ⚠️Eye Movement Detected</CardTitle>
           <CardDescription>
             Eye tracking showed movement during the interview.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <p className="text-sm text-green-900">
-            This indicates the candidate was responsive and attentive.
+          Eye tracking detected significant eye movement.
           </p>
         </CardContent>
       </Card>
     ) : (
       <Card className="bg-yellow-50 border border-yellow-400">
         <CardHeader>
-          <CardTitle className="text-yellow-800">⚠️ No Eye Movement Detected</CardTitle>
+          <CardTitle className="text-yellow-800">✅ No Eye Movement Detected</CardTitle>
           <CardDescription>
             Eye tracking did not detect significant eye movement.
           </CardDescription>
@@ -211,6 +249,18 @@ function AnalysisResults({ data }: { data: AnalysisData }) {
             Analysis Summary for {data.candidateName}
           </CardTitle>
         </CardHeader>
+
+        <div className="space-y-2">
+  <Label htmlFor="userEmail">Your Email</Label>
+  <Input
+    id="userEmail"
+    name="userEmail"
+    type="email"
+    placeholder="you@example.com"
+    required
+  />
+</div>
+
         <CardContent>
           <p className="text-card-foreground/90 whitespace-pre-wrap">{data.summary}</p>
         </CardContent>
@@ -336,3 +386,7 @@ function SkillBadgeList({ skills, variant }: { skills: string[], variant?: "defa
     </div>
   )
 }
+
+
+
+<CardContent></CardContent>
