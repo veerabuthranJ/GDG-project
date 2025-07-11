@@ -1,0 +1,72 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# --- Dependencies ---
+node_modules/
+.pnp/
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# --- Testing ---
+coverage/
+
+# --- Next.js ---
+.next/
+out/
+
+# --- Build Output ---
+build/
+dist/
+
+# --- Misc ---
+.DS_Store
+*.pem
+*.log
+*.zip
+*.tgz
+
+# --- Debug Logs ---
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.tsbuildinfo
+
+# --- Vercel ---
+.vercel/
+
+# --- TypeScript / Next.js ---
+next-env.d.ts
+
+# --- Firebase ---
+firebase-debug.log
+firestore-debug.log
+
+# --- Env Configs ---
+.env
+.env.*
+!.env.example   # keep this for reference/sample
+
+# --- Genkit & AI/LLM Stuff ---
+.genkit/
+.cache/
+data/cache/
+vector_store/
+rag_output/
+*.onnx
+*.ckpt
+*.tflite
+
+# --- OS-specific ---
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+*.swp
+*.swo
+Icon?
+
+# Ignore large ZIP archives
+interview-insights.zip
